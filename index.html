@@ -1,55 +1,35 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AKI MAGIC AI</title>
 <style>
-body {
-  background:#101020;
-  color:white;
-  font-family:Arial;
-  text-align:center;
-  padding:25px;
-}
-h1 {color:#00e5ff}
-textarea {
-  width:95%;
-  height:120px;
-  border-radius:12px;
-  padding:10px;
-}
-button {
-  background:#00e5ff;
-  padding:15px 25px;
-  border:0;
-  border-radius:12px;
-  font-weight:bold;
-}
-#result {margin-top:25px}
+body{margin:0;background:#090d1b;color:white;font-family:Arial;text-align:center;padding:25px}
+h1{color:#00e5ff;margin-top:35px}
+textarea{width:90%;max-width:600px;height:130px;padding:15px;border-radius:12px;font-size:16px}
+button{margin:15px;padding:14px 30px;background:#00d9ff;border:0;border-radius:10px;font-size:17px;font-weight:bold}
+#status{color:#ffd166}
+video{width:95%;max-width:600px;margin-top:20px}
 </style>
 </head>
 <body>
-<h1>AKI MAGIC AI</h1>
-<h3>AI VIDEO STUDIO</h3>
-<textarea id="prompt" placeholder="Enter your video idea"></textarea>
-<br><br>
-<button onclick="generate()">GENERATE</button>
-<div id="result"></div>
+<h1>🎬 AKI MAGIC AI</h1>
+<p>AI Video Generator</p>
+<textarea id="prompt" placeholder="Describe your video..."></textarea>
+<br>
+<button onclick="generate()">Generate Video</button>
+<p id="status">Ready</p>
+<video id="result" controls hidden></video>
+
 <script>
-function generate() {
- let p=document.getElementById("prompt").value.trim();
- let r=document.getElementById("result");
- if(!p) {
-  r.innerText="Please enter your idea!";
-  return;
- }
- r.innerText="Your video prompt is ready: "+p+
- ". AI video generation service needs to be connected.";
+async function generate(){
+ const prompt=document.getElementById("prompt").value.trim();
+ const status=document.getElementById("status");
+ if(!prompt){status.textContent="Please enter a prompt";return;}
+ status.textContent="Video generation API is not connected yet.";
 }
 </script>
 </body>
 </html>
-
-
-
