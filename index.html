@@ -1,1 +1,84 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AKILESH VIDEO AI</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #101020;
+  color: white;
+  text-align: center;
+}
+header {
+  padding: 25px;
+  background: #191932;
+}
+h1 { color: #8b7cff; }
+.container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+}
+textarea {
+  width: 95%;
+  height: 120px;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 16px;
+}
+button {
+  background: #7658ff;
+  color: white;
+  border: 0;
+  padding: 15px 30px;
+  border-radius: 10px;
+  margin: 15px;
+  font-size: 17px;
+}
+#status { color: #a99cff; }
+</style>
+</head>
+<body>
+
+<header>
+<h1>AKILESH VIDEO AI</h1>
+<p>AI Video Generator</p>
+</header>
+
+<div class="container">
+<h2>Create Your AI Video</h2>
+<p>Describe your video idea below</p>
+
+<textarea id="prompt"
+placeholder="Describe your video..."></textarea>
+
+<br>
+<button onclick="generateVideo()">
+Generate Video
+</button>
+
+<p id="status"></p>
+</div>
+
+<script>
+function generateVideo() {
+  const prompt = document.getElementById("prompt").value;
+  const status = document.getElementById("status");
+
+  if (!prompt.trim()) {
+    status.innerText = "Please enter your video idea!";
+    return;
+  }
+
+  status.innerText =
+    "Frontend ready! AI video generation API needs to be connected.";
+}
+</script>
+
+</body>
+</html>
+
