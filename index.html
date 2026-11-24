@@ -130,6 +130,24 @@ function loadFreeVideo() {
 
   const url = URL.createObjectURL(file);
   document.getElementById("freePreview").src = url;
+}function speakTamil() {
+  const text = document.getElementById("voiceText").value;
+
+  if (!text.trim()) {
+    alert("தமிழில் எழுதுங்கள்");
+    return;
+  }
+
+  speechSynthesis.cancel();
+
+  const msg = new SpeechSynthesisUtterance(text);
+  msg.lang = "ta-IN";
+
+  speechSynthesis.speak(msg);
+}
+
+function stopVoice() {
+  speechSynthesis.cancel();
 }</script>
 </body>
 </html>
