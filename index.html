@@ -120,7 +120,17 @@ function loadFreeVideo() {
   const url = URL.createObjectURL(file);
   document.getElementById("freePreview").src = url;
 }
-</script>
+function loadFreeVideo() {
+  const file = document.getElementById("freeVideo").files[0];
+
+  if (!file) {
+    alert("Please select a video");
+    return;
+  }
+
+  const url = URL.createObjectURL(file);
+  document.getElementById("freePreview").src = url;
+}</script>
 </body>
 </html>
 
