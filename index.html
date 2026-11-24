@@ -153,7 +153,28 @@ function stopVoice() {
   <textarea id="voiceText" placeholder="தமிழில் எழுதுங்கள்..."></textarea>
   <button onclick="speakTamil()">Speak Tamil</button>
   <button onclick="stopVoice()">Stop Voice</button>
-</div></script>
+</div>const video = document.getElementById("result");
+
+video.addEventListener("play", function () {
+  const text = document.getElementById("voiceText").value;
+
+  if (text.trim()) {
+    speechSynthesis.cancel();
+
+    const voice = new SpeechSynthesisUtterance(text);
+    voice.lang = "ta-IN";
+
+    speechSynthesis.speak(voice);
+  }
+});
+
+video.addEventListener("pause", function () {
+  speechSynthesis.cancel();
+});
+
+video.addEventListener("ended", function () {
+  speechSynthesis.cancel();
+});</script>
 </div></body>
 </html>
 </div></body>
