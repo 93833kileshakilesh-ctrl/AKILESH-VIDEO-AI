@@ -6,30 +6,102 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AKI MAGIC AI</title>
 <style>
-body{margin:0;background:#090d1b;color:white;font-family:Arial;text-align:center;padding:25px}
-h1{color:#00e5ff;margin-top:35px}
-textarea{width:90%;max-width:600px;height:130px;padding:15px;border-radius:12px;font-size:16px}
-button{margin:15px;padding:14px 30px;background:#00d9ff;border:0;border-radius:10px;font-size:17px;font-weight:bold}
-#status{color:#ffd166}
-video{width:95%;max-width:600px;margin-top:20px}
+body {
+  margin: 0;
+  background: #090d1b;
+  color: white;
+  font-family: Arial;
+  text-align: center;
+  padding: 25px;
+}
+h1 { color: #00e5ff; margin-top: 35px; }
+textarea {
+  width: 90%;
+  max-width: 600px;
+  height: 130px;
+  padding: 15px;
+  border-radius: 12px;
+  font-size: 16px;
+}
+button {
+  margin: 15px;
+  padding: 14px 30px;
+  background: #00d9ff;
+  border: 0;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: bold;
+}
+button:disabled { opacity: 0.5; }
+#status { color: #ffd166; }
+video {
+  width: 95%;
+  max-width: 600px;
+  margin-top: 20px;
+}
 </style>
 </head>
 <body>
+
 <h1>🎬 AKI MAGIC AI</h1>
 <p>AI Video Generator</p>
+
 <textarea id="prompt" placeholder="Describe your video..."></textarea>
 <br>
-<button onclick="generate()">Generate Video</button>
+
+<button id="generateBtn" onclick="generate()">Generate Video</button>
+
 <p id="status">Ready</p>
 <video id="result" controls hidden></video>
 
 <script>
-async function generate(){
- const prompt=document.getElementById("prompt").value.trim();
- const status=document.getElementById("status");
- if(!prompt){status.textContent="Please enter a prompt";return;}
- status.textContent="Video generation API is not connected yet.";
+async function generate() {
+  const prompt = document.getElementById("prompt").value.trim();
+  const status = document.getElementById("status");
+  const button = document.getElementById("generateBtn");
+  const video = document.getElementById("result");
+
+  if (!prompt) {
+    status.textContent = "Please enter a prompt.";
+    return;
+  }
+
+  button.disabled = true;
+  video.hidden = true;
+  status.textContent = "Generating video... Please wait.";
+
+  try {
+    const response = await fetch(
+      "https://akilesh-video-ai.onrender.com/generate-video",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ prompt: prompt })
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || "Video generation failed.");
+    }
+
+    const videoBlob = await response.blob();
+    const videoURL = URL.createObjectURL(videoBlob);
+
+    video.src = videoURL;
+    video.hidden = false;
+    status.textContent = "Video generated successfully! 🎉";
+    video.play();
+
+  } catch (error) {
+    status.textContent = "Error: " + error.message;
+  } finally {
+    button.disabled = false;
+  }
 }
 </script>
+
 </body>
 </html>
