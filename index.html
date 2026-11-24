@@ -182,7 +182,26 @@ video.addEventListener("ended", function () {
     height="650"
     style="border:0;border-radius:12px">
   </iframe>
-</div></script>
+</div>function playVideoWithTamilVoice() {
+  const video = document.getElementById("freePreview");
+  const text = document.getElementById("voiceText").value;
+
+  if (!text.trim()) {
+    alert("தமிழ் வசனம் எழுதுங்கள்!");
+    return;
+  }
+
+  speechSynthesis.cancel();
+
+  const voice = new SpeechSynthesisUtterance(text);
+  voice.lang = "ta-IN";
+
+  video.onplay = () => speechSynthesis.speak(voice);
+  video.onpause = () => speechSynthesis.cancel();
+  video.onended = () => speechSynthesis.cancel();
+
+  video.play();
+  }</script>
 
 </div></body>
 </html>
