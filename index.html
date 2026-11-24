@@ -3,105 +3,192 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AKI MAGIC AI</title>
 <style>
-body {
-  margin: 0;
-  background: #090d1b;
-  color: white;
-  font-family: Arial;
-  text-align: center;
-  padding: 25px;
-}
-h1 { color: #00e5ff; margin-top: 35px; }
-textarea {
-  width: 90%;
-  max-width: 600px;
-  height: 130px;
-  padding: 15px;
-  border-radius: 12px;
-  font-size: 16px;
-}
-button {
-  margin: 15px;
-  padding: 14px 30px;
-  background: #00d9ff;
-  border: 0;
-  border-radius: 10px;
-  font-size: 17px;
-  font-weight: bold;
-}
-button:disabled { opacity: 0.5; }
-#status { color: #ffd166; }
-video {
-  width: 95%;
-  max-width: 600px;
-  margin-top: 20px;
-}
+*{box-sizing:border-box}
+body{margin:0;padding:18px;background:#080d1c;color:white;font-family:Arial}
+.container{max-width:650px;margin:auto}
+h1{text-align:center;color:#00e5ff}
+.card{background:#17213b;padding:18px;border-radius:15px;margin:15px 0}
+textarea,select{width:100%;padding:13px;margin:9px 0;background:#0b1429;color:white;border:1px solid #455477;border-radius:9px}
+button{width:100%;padding:14px;margin:7px 0;border:0;border-radius:9px;background:#00d5ed;color:#07101c;font-weight:bold;font-size:16px}
+button:disabled{opacity:.5}
+video{width:100%;margin-top:15px;border-radius:12px}
+#status{color:#00e5ff;text-align:center}
+.small{color:#bbc7df;font-size:13px}
 </style>
 </head>
 <body>
+<div class="container">
+<h1>✨ AKI MAGIC AI ✨</h1>
+<p style="text-align:center">AI Video & Tamil Voice Studio</p>
 
-<h1>🎬 AKI MAGIC AI</h1>
-<p>AI Video Generator</p>
-
-<textarea id="prompt" placeholder="Describe your video..."></textarea>
-<br>
-
-<button id="generateBtn" onclick="generate()">Generate Video</button>
-
+<div class="card">
+<h3>🎬 Text to Video</h3>
+<textarea id="prompt" rows="4" placeholder="Describe your video..."></textarea>
+<button id="generate" onclick="generateVideo()">Generate Video</button>
 <p id="status">Ready</p>
-<video id="result" controls hidden></video>
+<video id="video" controls playsinline></video>
+<a id="download" style="display:none;color:#00e5ff" download="aki-video.mp4">⬇ Download Video</a>
+</div>
+
+<div class="card">
+<h3>🗣️ Tamil Voice Generator</h3>
+<textarea id="speech" rows="4" placeholder="தமிழில் பேச வேண்டியதை எழுதுங்கள்..."></textarea>
+<select id="voiceType">
+<option value="male">Tamil Male Voice</option>
+<option value="female">Tamil Female Voice</option>
+</select>
+<button onclick="speakTamil()">🔊 Speak Tamil</button>
+<button onclick="stopVoice()">⏹ Stop Voice</button>
+<p class="small">Available Tamil voices depend on your phone/browser.</p>
+</div>
+
+<div class="card">
+<h3>🐒 Monkey Funny Sound</h3>
+<button onclick="monkeySound()">🐒 Play Monkey Sound</button>
+<button onclick="stopMonkey()">⏹ Stop Sound</button>
+</div>
+
+</div>
 
 <script>
-async function generate() {
-  const prompt = document.getElementById("prompt").value.trim();
-  const status = document.getElementById("status");
-  const button = document.getElementById("generateBtn");
-  const video = document.getElementById("result");
+const API_URL =
+"https://akilesh-video-ai-1.onrender.com/generate-video";
 
-  if (!prompt) {
-    status.textContent = "Please enter a prompt.";
-    return;
+async function generateVideo(){
+ const prompt=document.getElementById("prompt").value.trim();
+ const status=document.getElementById("status");
+ const button=document.getElementById("generate");
+ const video=document.getElementById("video");
+ const download=document.getElementById("download");
+
+ if(!prompt){
+  status.textContent="Please enter a video prompt.";
+  return;
+ }
+
+ button.disabled=true;
+ status.textContent="Generating video... Please wait.";
+ download.style.display="none";
+
+ try{
+  const response=await fetch(API_URL,{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({prompt})
+  });
+
+  if(!response.ok){
+   const error=await response.text();
+   throw new Error(error || "Video generation failed");
   }
 
-  button.disabled = true;
-  video.hidden = true;
-  status.textContent = "Generating video... Please wait.";
-
-  try {
-    const response = await fetch(
-      "https://akilesh-video-ai-1.onrender.com/generate-video",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ prompt: prompt })
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || "Video generation failed.");
-    }
-
-    const videoBlob = await response.blob();
-    const videoURL = URL.createObjectURL(videoBlob);
-
-    video.src = videoURL;
-    video.hidden = false;
-    status.textContent = "Video generated successfully! 🎉";
-    video.play();
-
-  } catch (error) {
-    status.textContent = "Error: " + error.message;
-  } finally {
-    button.disabled = false;
-  }
+  const blob=await response.blob();
+  const url=URL.createObjectURL(blob);
+  video.src=url;
+  download.href=url;
+  download.style.display="block";
+  status.textContent="Video ready!";
+ }catch(error){
+  status.textContent="Error: "+error.message;
+ }finally{
+  button.disabled=false;
+ }
 }
-</script>
 
+function speakTamil(){
+ const text=document.getElementById("speech").value.trim();
+ if(!text){
+  alert("தமிழ் text எழுதுங்கள்");
+  return;
+ }
+
+ if(!("speechSynthesis" in window)){
+  alert("இந்த browser voice support செய்யவில்லை.");
+  return;
+ }
+
+ speechSynthesis.cancel();
+
+ const utterance=new SpeechSynthesisUtterance(text);
+ utterance.lang="ta-IN";
+
+ const voices=speechSynthesis.getVoices();
+ const tamilVoices=voices.filter(v=>v.lang.toLowerCase().startsWith("ta"));
+
+ if(tamilVoices.length){
+  const type=document.getElementById("voiceType").value;
+  const selected=tamilVoices.find(v=>
+   type==="female"
+   ? /female|woman|lekha|kalpana/i.test(v.name)
+   : /male|man|kumar|ravi/i.test(v.name)
+  );
+  utterance.voice=selected || tamilVoices[0];
+ }
+
+ utterance.rate=0.9;
+ speechSynthesis.speak(utterance);
+}
+
+function stopVoice(){
+ speechSynthesis.cancel();
+}
+
+let monkeyOscillators=[];
+
+function monkeySound(){
+ stopMonkey();
+
+ const AudioContext=window.AudioContext || window.webkitAudioContext;
+ if(!AudioContext){
+  alert("Audio not supported");
+  return;
+ }
+
+ const ctx=new AudioContext();
+
+ function beep(freq,duration,start){
+  const osc=ctx.createOscillator();
+  const gain=ctx.createGain();
+
+  osc.type="sawtooth";
+  osc.frequency.setValueAtTime(freq,ctx.currentTime+start);
+  osc.frequency.exponentialRampToValueAtTime(
+   freq*0.65,ctx.currentTime+start+duration
+  );
+
+  gain.gain.setValueAtTime(0.001,ctx.currentTime+start);
+  gain.gain.linearRampToValueAtTime(
+   0.15,ctx.currentTime+start+0.03
+  );
+  gain.gain.exponentialRampToValueAtTime(
+   0.001,ctx.currentTime+start+duration
+  );
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(ctx.currentTime+start);
+  osc.stop(ctx.currentTime+start+duration);
+  monkeyOscillators.push(osc);
+ }
+
+ beep(650,0.22,0);
+ beep(900,0.18,0.25);
+ beep(500,0.3,0.5);
+ beep(1000,0.2,0.85);
+ beep(700,0.3,1.1);
+}
+
+function stopMonkey(){
+ monkeyOscillators.forEach(o=>{
+  try{o.stop()}catch(e){}
+ });
+ monkeyOscillators=[];
+}
+
+speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
+</script>
 </body>
 </html>
